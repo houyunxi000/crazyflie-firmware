@@ -281,7 +281,7 @@ static void kalmanTask(void *parameters)
     /*自己添加*/
     swarmVx = taskEstimatorState.velocity.x;
     swarmVy = taskEstimatorState.velocity.y;
-    swarmGz = taskEstimatorState.attitude.yaw;
+    swarmGz = gyroSubSampler.subSample.z;
     swarmh = taskEstimatorState.position.z;
     /*自己添加*/
     STATS_CNT_RATE_EVENT(&updateCounter);
