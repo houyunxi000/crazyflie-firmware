@@ -63,9 +63,12 @@ void estimatorKalman(state_t *state, const uint32_t tick);
 void estimatorKalmanTaskInit();
 bool estimatorKalmanTaskTest();
 
-void estimatorKalmanGetEstimatedPos(point_t* pos);
+void estimatorKalmanGetEstimatedPos(point_t *pos);
 
 /**
  * Copies 9 floats representing the current state rotation matrix
  */
-void estimatorKalmanGetEstimatedRot(float * rotationMatrix);
+void estimatorKalmanGetEstimatedRot(float *rotationMatrix);
+/*自己添加*/
+void estimatorKalmanGetSwarmInfo(float *vx, float *vy, float *gyroZ, float *height);
+/*自己添加*/
