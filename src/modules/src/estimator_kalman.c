@@ -257,6 +257,13 @@ static void kalmanTask(void *parameters)
 
     if (kalmanCoreFinalize(&coreData))
     {
+      /*自己添加*/
+      swarmVx = coreData.R[0][0] * coreData.S[KC_STATE_PX] + coreData.R[0][1] * coreData.S[KC_STATE_PY] + coreData.R[0][2] * coreData.S[KC_STATE_PZ];
+      swarmVy = coreData.R[1][0] * coreData.S[KC_STATE_PX] + coreData.R[1][1] * coreData.S[KC_STATE_PY] + coreData.R[1][2] * coreData.S[KC_STATE_PZ];
+
+      swarmGz = gyroLatest.z * DEG_TO_RAD;
+      swarmh = coreData.S[KC_STATE_Z];
+      /*自己添加*/
       STATS_CNT_RATE_EVENT(&finalizeCounter);
     }
 
@@ -278,12 +285,7 @@ static void kalmanTask(void *parameters)
     xSemaphoreTake(dataMutex, portMAX_DELAY);
     kalmanCoreExternalizeState(&coreData, &taskEstimatorState, &accLatest);
     xSemaphoreGive(dataMutex);
-    /*自己添加*/
-    swarmVx = taskEstimatorState.velocity.x;
-    swarmVy = taskEstimatorState.velocity.y;
-    swarmGz = gyroLatest.z * DEG_TO_RAD;
-    swarmh = taskEstimatorState.position.z;
-    /*自己添加*/
+
     STATS_CNT_RATE_EVENT(&updateCounter);
   }
 }
@@ -538,6 +540,10 @@ LOG_GROUP_STOP(kalman)
 LOG_GROUP_START(outlierf)
 LOG_ADD(LOG_INT32, lhWin, &sweepOutlierFilterState.openingWindowMs)
 LOG_GROUP_STOP(outlierf)
+
+/*自己添加*/
+
+/*自己添加*/
 
 /**
  * Tuning parameters for the Extended Kalman Filter (EKF)
