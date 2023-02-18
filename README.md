@@ -37,6 +37,6 @@ To run the tests please have a look at the [unit test documentation](https://www
 
 The code is licensed under LGPL-3.0
 ## 如何运行：
-将3架无人机的编号设置为：0xE7E7E7E7E1，0xE7E7E7E7E2，0xE7E7E7E7E3
-在cfclient上连接到编号为0xE7E7E7E7E1的无人机，设置keepflying为1，即可开始飞行
+1. 将3架无人机的编号设置为：0xE7E7E7E7E1，0xE7E7E7E7E2，0xE7E7E7E7E3
+2. 在cfclient上连接到编号为0xE7E7E7E7E1的无人机，设置keepflying为1，即可开始飞行
 ![image](https://user-images.githubusercontent.com/67683572/219830192-18ccc4ae-a9c9-4aa6-aa95-979eeb100d9d.png)
