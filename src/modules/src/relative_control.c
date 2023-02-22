@@ -15,7 +15,8 @@
 #define USE_MONOCAM 0
 
 static bool isInit;
-static bool onGround = true;
+static bool onGround = true; // 无人机当前是否在地面上
+static bool isCompleteTaskAndLand = false;  // 无人机是否已经执行了飞行任务并落地
 static bool keepFlying = false;
 static setpoint_t setpoint;
 static float_t relaVarInCtrl[NumUWB][STATE_DIM_rl];
@@ -194,6 +195,7 @@ void land()
     }
   }
   onGround = true;
+  isCompleteTaskAndLand = true;
 }
 
 float get_min(float *var_history, int len_history)
@@ -273,7 +275,7 @@ void relativeControlTask(void *arg)
 #endif
     keepFlying = command_share(selfID, keepFlying);
     bool is_connect = relativeInfoRead((float_t *)relaVarInCtrl, (float_t *)inputVarInCtrl);
-    if (is_connect && keepFlying)
+    if (is_connect && keepFlying &&!isCompleteTaskAndLand)
     {
 
       // take off
