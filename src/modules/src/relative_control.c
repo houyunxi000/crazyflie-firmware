@@ -287,7 +287,7 @@ void relativeControlTask(void *arg)
       // setHoverSetpoint(&setpoint, 0, 0, height, 0); // hover
       uint32_t tickInterval = xTaskGetTickCount() - ctrlTick;
       // DEBUG_PRINT("tick:%d\n",tickInterval);
-      if (tickInterval < 20000)
+      if (tickInterval <= 20000)
       {
 
         flyRandomIn1meter(); // random flight within first 10 seconds
@@ -303,7 +303,7 @@ void relativeControlTask(void *arg)
         else
           formation0asCenter(targetX, targetY);
 #else
-        if ((tickInterval > 20000) && (tickInterval < 50000))
+        if ((tickInterval > 20000) && (tickInterval <= 50000))
         { // 0-random, other formation
           if (selfID == 0)
             flyRandomIn1meter();
@@ -311,7 +311,7 @@ void relativeControlTask(void *arg)
             formation0asCenter(targetX, targetY);
           // NDI_formation0asCenter(targetX, targetY);
         }
-        else if ((tickInterval > 50000) && (tickInterval < 70000))
+        else if ((tickInterval > 50000) && (tickInterval <= 70000))
         {
           if (selfID == 0)
             flyRandomIn1meter();
@@ -322,7 +322,7 @@ void relativeControlTask(void *arg)
             formation0asCenter(targetX, targetY);
           }
         }
-        else if (tickInterval > 70000 && tickInterval < 90000)
+        else if (tickInterval > 70000 && tickInterval <= 90000)
         {
           if (selfID == 0)
             setHoverSetpoint(&setpoint, 0, 0, height, 0);
