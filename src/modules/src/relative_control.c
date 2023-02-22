@@ -333,7 +333,6 @@ void relativeControlTask(void *arg)
         {
           // 运行90s之后，落地结束本次任务?
           land();
-          break;
         }
 #endif
       }
