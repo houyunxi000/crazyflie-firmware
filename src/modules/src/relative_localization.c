@@ -54,19 +54,22 @@ static float vxj, vyj, rj; // receive vx, vy, gz and distance
 static float vxi, vyi, ri; // self vx, vy, gz
 static uint16_t dij;       // distance between self i and other j
 static float hi, hj;       // height of robot i and j
-
+// 矩阵转置
 static inline void mat_trans(const arm_matrix_instance_f32 *pSrc, arm_matrix_instance_f32 *pDst)
 {
   configASSERT(ARM_MATH_SUCCESS == arm_mat_trans_f32(pSrc, pDst));
 }
+// 矩阵求逆
 static inline void mat_inv(const arm_matrix_instance_f32 *pSrc, arm_matrix_instance_f32 *pDst)
 {
   configASSERT(ARM_MATH_SUCCESS == arm_mat_inverse_f32(pSrc, pDst));
 }
+// 矩阵相乘
 static inline void mat_mult(const arm_matrix_instance_f32 *pSrcA, const arm_matrix_instance_f32 *pSrcB, arm_matrix_instance_f32 *pDst)
 {
   configASSERT(ARM_MATH_SUCCESS == arm_mat_mult_f32(pSrcA, pSrcB, pDst));
 }
+// 求根号
 static inline float arm_sqrt(float32_t in)
 {
   float pOut = 0;
@@ -104,18 +107,15 @@ void relativeLocoTask(void *arg)
     relaVar[n].S[STATE_rlYaw] = 0;
     relaVar[n].receiveFlag = false;
   }
-  uint32_t i = 0;
-  bool flag = false;
   while (1)
   {
-    i++;
     vTaskDelay(10);
     for (int n = 0; n < NumUWB; n++)
     {
       if (twrGetSwarmInfo(n, &dij, &vxj, &vyj, &rj, &hj))
       {
         connectCount = 0;
-        estimatorKalmanGetSwarmInfo(&vxi, &vyi, &ri, &hi);
+        estimatorKalmanGetSwarmInfo(&vxi, &vyi, &ri, &hi); // 当前无人机的信息
         if (relaVar[n].receiveFlag)
         {
           uint32_t osTick = xTaskGetTickCount();

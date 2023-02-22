@@ -15,8 +15,8 @@
 #define USE_MONOCAM 0
 
 static bool isInit;
-static bool onGround = true; // 无人机当前是否在地面上
-static bool isCompleteTaskAndLand = false;  // 无人机是否已经执行了飞行任务并落地
+static bool onGround = true;               // 无人机当前是否在地面上
+static bool isCompleteTaskAndLand = false; // 无人机是否已经执行了飞行任务并落地
 static bool keepFlying = false;
 static setpoint_t setpoint;
 static float_t relaVarInCtrl[NumUWB][STATE_DIM_rl];
@@ -117,13 +117,13 @@ static void formation0asCenter(float_t tarX, float_t tarY)
   // pid control for formation flight
   float err_x = -(tarX - relaVarInCtrl[0][STATE_rlX]);
   float err_y = -(tarY - relaVarInCtrl[0][STATE_rlY]);
-  float pid_vx = relaCtrl_p * err_x;
+  float pid_vx = relaCtrl_p * err_x; // 基于距离差进行一个速度控制
   float pid_vy = relaCtrl_p * err_y;
-  float dx = (err_x - PreErr_x) / dt;
+  float dx = (err_x - PreErr_x) / dt; // 先前的速度
   float dy = (err_y - PreErr_y) / dt;
   PreErr_x = err_x;
   PreErr_y = err_y;
-  pid_vx += relaCtrl_d * dx;
+  pid_vx += relaCtrl_d * dx; // 加上先前速度*比例系数
   pid_vy += relaCtrl_d * dy;
   IntErr_x += err_x * dt;
   IntErr_y += err_y * dt;
@@ -275,7 +275,7 @@ void relativeControlTask(void *arg)
 #endif
     keepFlying = command_share(selfID, keepFlying);
     bool is_connect = relativeInfoRead((float_t *)relaVarInCtrl, (float_t *)inputVarInCtrl);
-    if (is_connect && keepFlying &&!isCompleteTaskAndLand)
+    if (is_connect && keepFlying && !isCompleteTaskAndLand)
     {
 
       // take off
