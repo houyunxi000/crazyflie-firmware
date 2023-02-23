@@ -13,16 +13,19 @@
 #include "log.h"
 #include "math.h"
 #define USE_MONOCAM 0
+#define SELFIDIS0 1 // 编译0号无人机其值为1，其他无人机为0
 
 static bool isInit;
-static bool onGround = true;               // 无人机当前是否在地面�?
-static bool isCompleteTaskAndLand = false; // 无人机是否已经执行了飞行任务并落�?
+static bool onGround = true;               // 无人机当前是否在地面上?
+static bool isCompleteTaskAndLand = false; // 无人机是否已经执行了飞行任务并落地?
 static bool keepFlying = false;
 static setpoint_t setpoint;
 static float_t relaVarInCtrl[NumUWB][STATE_DIM_rl];
 static float_t inputVarInCtrl[NumUWB][STATE_DIM_rl];
 static uint8_t selfID;
 static float_t height = 0.5;
+static uint32_t takeoff_tick;
+static uint32_t tickInterval;
 
 static float relaCtrl_p = 2.0f;
 static float relaCtrl_i = 0.0001f;
@@ -55,11 +58,13 @@ static void flyRandomIn1meter(void)
   {
     setHoverSetpoint(&setpoint, vxBody, vyBody, height, 0);
     vTaskDelay(M2T(10));
+    tickInterval = xTaskGetTickCount() - takeoff_tick;
   }
   for (int i = 1; i < 100; i++)
   {
     setHoverSetpoint(&setpoint, -vxBody, -vyBody, height, 0);
     vTaskDelay(M2T(10));
+    tickInterval = xTaskGetTickCount() - takeoff_tick;
   }
 }
 
@@ -262,7 +267,6 @@ void reset_estimators()
 void relativeControlTask(void *arg)
 {
   static const float_t targetList[7][STATE_DIM_rl] = {{0.0f, 0.0f, 0.0f}, {-1.0f, 0.5f, 0.0f}, {-1.0f, -0.5f, 0.0f}, {-1.0f, -1.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, {-2.0f, 0.0f, 0.0f}};
-  static uint32_t ctrlTick;
   systemWaitStart();
   reset_estimators();
 
@@ -282,12 +286,12 @@ void relativeControlTask(void *arg)
       if (onGround)
       {
         take_off();
-        ctrlTick = xTaskGetTickCount();
+        takeoff_tick = xTaskGetTickCount();
       }
 
       // control loop
       // setHoverSetpoint(&setpoint, 0, 0, height, 0); // hover
-      uint32_t tickInterval = xTaskGetTickCount() - ctrlTick;
+      tickInterval = xTaskGetTickCount() - takeoff_tick;
       // DEBUG_PRINT("tick:%d\n",tickInterval);
       if (tickInterval <= 20000)
       {
@@ -351,7 +355,7 @@ void relativeControlInit(void)
 {
   if (isInit)
     return;
-  // selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 5); //原论文代�?
+  // selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 5); //原论文代码
   selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 1);
   // 我设置的radioaddress是从1开始的，所以要-1
 #if USE_MONOCAM
@@ -361,6 +365,19 @@ void relativeControlInit(void)
   xTaskCreate(relativeControlTask, "relative_Control", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
   isInit = true;
 }
+#if SELFIDIS0
+/*自己添加---注意只有0号无人机加这块代码，其他加没有意义*/
+LOG_GROUP_START(rlInfo)
+LOG_ADD(LOG_UINT32, tickInterval, &tickInterval)
+LOG_ADD(LOG_FLOAT, X1, &relaVarInCtrl[1][STATE_rlX])
+LOG_ADD(LOG_FLOAT, Y1, &relaVarInCtrl[1][STATE_rlY])
+LOG_ADD(LOG_FLOAT, Yaw1, &relaVarInCtrl[1][STATE_rlYaw])
+LOG_ADD(LOG_FLOAT, X2, &relaVarInCtrl[2][STATE_rlX])
+LOG_ADD(LOG_FLOAT, Y2, &relaVarInCtrl[2][STATE_rlY])
+LOG_ADD(LOG_FLOAT, Yaw2, &relaVarInCtrl[2][STATE_rlYaw])
+LOG_GROUP_STOP(relative_ctrl)
+/*自己添加*/
+#endif
 
 PARAM_GROUP_START(relative_ctrl)
 PARAM_ADD(PARAM_UINT8, keepFlying, &keepFlying)
