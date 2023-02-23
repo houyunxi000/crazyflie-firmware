@@ -301,8 +301,6 @@ static void rxcallback(dwDevice_t *dev)
           current_receiveID = 0;
         else
           current_receiveID = NumUWB - 1;
-        if (selfID == 0)
-          current_receiveID = NumUWB - 2; // immediate problem
         txPacket.payload[LPS_TWR_TYPE] = LPS_TWR_POLL;
         txPacket.payload[LPS_TWR_SEQ] = 0;
         txPacket.sourceAddress = selfAddress;
