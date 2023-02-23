@@ -171,7 +171,7 @@ void take_off()
     setHoverSetpoint(&setpoint, 0, 0, height, 0);
     vTaskDelay(M2T(100));
   }
-  // unsynchronize   ？？？每一个无人机在同一高度悬停的时间不�??
+  // unsynchronize   ？？？每一个无人机在同一高度悬停的时间不同
   for (int i = 0; i < 10 * selfID; i++)
   {
     setHoverSetpoint(&setpoint, 0, 0, height, 0);
@@ -186,7 +186,7 @@ void land()
   if (!onGround)
   {
     int i = 0;
-    float land_height_per_100ms = 0.01;            // 每秒下降的高度为该变量的�?*10
+    float land_height_per_100ms = 0.01;            // 每秒下降的高度为该变量的值*10
     while (height - i * land_height_per_100ms > 0) // 1s下降0.1s
     {
       i++;
@@ -333,7 +333,7 @@ void relativeControlTask(void *arg)
         }
         else
         {
-          // 运行90s之后，落地结束本次任�??
+          // 运行90s之后，落地结束本次任务
           land();
         }
 #endif
@@ -341,7 +341,7 @@ void relativeControlTask(void *arg)
     }
     else
     {
-      //  只是暂时没有无人机在运行了，不需要结束任�??
+      //  只是暂时没有无人机在运行了，不需要结束任务
       land();
     }
   }

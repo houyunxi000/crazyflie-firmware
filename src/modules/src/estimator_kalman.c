@@ -419,6 +419,14 @@ void estimatorKalmanGetSwarmInfo(float *vx, float *vy, float *gyroZ, float *heig
 }
 /*自己添加*/
 
+/*自己添加*/
+LOG_GROUP_START(swarmstate)
+LOG_ADD(LOG_FLOAT, swaVx, &swarmVx)
+LOG_ADD(LOG_FLOAT, swaVy, &swarmVy)
+LOG_ADD(LOG_FLOAT, swaGz, &swarmGz)
+LOG_ADD(LOG_FLOAT, swah, &swarmh)
+LOG_GROUP_STOP(swarmstate)
+/*自己添加*/
 /**
  * Variables and results from the Extended Kalman Filter
  */
