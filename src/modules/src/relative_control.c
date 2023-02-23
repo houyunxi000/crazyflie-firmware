@@ -15,8 +15,8 @@
 #define USE_MONOCAM 0
 
 static bool isInit;
-static bool onGround = true;               // 无人机当前是否在地面上
-static bool isCompleteTaskAndLand = false; // 无人机是否已经执行了飞行任务并落地
+static bool onGround = true;               // 无人机当前是否在地面�?
+static bool isCompleteTaskAndLand = false; // 无人机是否已经执行了飞行任务并落�?
 static bool keepFlying = false;
 static setpoint_t setpoint;
 static float_t relaVarInCtrl[NumUWB][STATE_DIM_rl];
@@ -47,7 +47,7 @@ static void setHoverSetpoint(setpoint_t *setpoint, float vx, float vy, float z, 
 static void flyRandomIn1meter(void)
 {
   float_t randomYaw = (rand() / (float)RAND_MAX) * 6.28f; // 0-2pi rad
-  float_t randomVel = (rand() / (float)RAND_MAX) * 0.5;   // 原来是速度是0-1m/s，我设置小一点0-0.3m/s
+  float_t randomVel = (rand() / (float)RAND_MAX) * 1;     //
   // float_t randomVel = (rand() / (float)RAND_MAX);         // 0-1 m/s
   float_t vxBody = randomVel * cosf(randomYaw); // 速度分解
   float_t vyBody = randomVel * sinf(randomYaw);
@@ -171,7 +171,7 @@ void take_off()
     setHoverSetpoint(&setpoint, 0, 0, height, 0);
     vTaskDelay(M2T(100));
   }
-  // unsynchronize   ？？？每一个无人机在同一高度悬停的时间不同?
+  // unsynchronize   ？？？每一个无人机在同一高度悬停的时间不�??
   for (int i = 0; i < 10 * selfID; i++)
   {
     setHoverSetpoint(&setpoint, 0, 0, height, 0);
@@ -186,16 +186,16 @@ void land()
   if (!onGround)
   {
     int i = 0;
-    float land_height_per_100ms = 0.01;            // 每秒下降的高度为该变量的值*10
+    float land_height_per_100ms = 0.01;            // 每秒下降的高度为该变量的�?*10
     while (height - i * land_height_per_100ms > 0) // 1s下降0.1s
     {
       i++;
       setHoverSetpoint(&setpoint, 0, 0, height - (float)i * land_height_per_100ms, 0);
       vTaskDelay(M2T(100));
     }
+    isCompleteTaskAndLand = true;
   }
   onGround = true;
-  isCompleteTaskAndLand = true;
 }
 
 float get_min(float *var_history, int len_history)
@@ -333,7 +333,7 @@ void relativeControlTask(void *arg)
         }
         else
         {
-          // 运行90s之后，落地结束本次任务?
+          // 运行90s之后，落地结束本次任�??
           land();
         }
 #endif
@@ -341,7 +341,7 @@ void relativeControlTask(void *arg)
     }
     else
     {
-      //  只是暂时没有无人机在运行了，不需要结束任务?
+      //  只是暂时没有无人机在运行了，不需要结束任�??
       land();
     }
   }
@@ -351,7 +351,7 @@ void relativeControlInit(void)
 {
   if (isInit)
     return;
-  // selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 5); //原论文代码
+  // selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 5); //原论文代�?
   selfID = (uint8_t)(((configblockGetRadioAddress()) & 0x000000000f) - 1);
   // 我设置的radioaddress是从1开始的，所以要-1
 #if USE_MONOCAM
